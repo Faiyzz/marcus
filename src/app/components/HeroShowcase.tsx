@@ -1,173 +1,137 @@
-// components/HeroShowcase.tsx
+// components/HeroFlow.tsx
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-type Item = {
-  poster: string;          // thumbnail image (required)
-  src?: string;            // optional .mp4 (plays on hover)
-  label?: string;          // small caption under the card
-  alt?: string;
-};
-
-export default function HeroShowcase({
-  items = [],
-  heading = (
-    <>
-      Short-Form Edits <span className="text-red-600">Built to Perform</span>
-    </>
-  ),
-  subtext = "Clean, fast, platform-native cuts for TikTok · Reels · Shorts.",
-  cta = { label: "See Work", href: "#work" },
-}: {
-  items: Item[];
-  heading?: React.ReactNode;
+type HeroFlowProps = {
+  images?: string[]; // 9:16 portraits
+  titleTop?: string;
+  titleBold?: string;
   subtext?: string;
   cta?: { label: string; href: string };
-}) {
-  const safeItems = useMemo(() => (items.length ? items : demoItems), [items]);
+};
+
+const DEFAULT_IMAGES = [
+  "/images/p1.png",
+  "/images/p1.png",
+  "/images/p1.png",
+  "/images/p1.png",
+  "/images/p1.png",
+  "/images/p1.png",
+];
+
+export default function HeroFlow({
+  images = DEFAULT_IMAGES,
+  titleTop = "Bring Stories to Life,",
+  titleBold = "One Edit at a Time",
+  subtext = "Crafting cinematic, scroll-stopping short-form videos for TikTok, Reels, and YouTube Shorts.",
+  cta = { label: "Let’s Create Together", href: "#" },
+}: HeroFlowProps) {
+  // keep an internal rotating list so the row feels alive
+  const [roll, setRoll] = useState(0);
+  const pics = useMemo(
+    () => images.length ? images : DEFAULT_IMAGES,
+    [images]
+  );
+
+  useEffect(() => {
+    const id = setInterval(() => setRoll((r) => (r + 1) % pics.length), 2800);
+    return () => clearInterval(id);
+  }, [pics.length]);
+
+  const ordered = useMemo(() => {
+    // rotate array by `roll`
+    return pics.map((_, i) => pics[(i + roll) % pics.length]);
+  }, [pics, roll]);
+
+  // subtle arc positions & tilts to mimic the reference UI
+  const offsets = [-10, -18, -22, -18, -10, -4]; // translateY (px)
+  const tilts = [-7, -4, -1, 1, 4, 7]; // rotate (deg)
+  const opac = [0.9, 0.95, 1, 1, 0.95, 0.9];
 
   return (
-    <section className="relative mx-auto max-w-7xl px-4 pt-28 pb-20 sm:px-6 lg:px-8">
-      {/* Heading block */}
-      <div className="text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-6xl">
-          {heading}
-        </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-base text-neutral-600 sm:text-lg">
-          {subtext}
-        </p>
-        <div className="mt-6 flex justify-center gap-3">
-          <Link
-            href={cta.href}
-            className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-red-700"
-          >
-            {cta.label}
-          </Link>
-          <Link
-            href="#contact"
-            className="rounded-full border border-red-600 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50"
-          >
-            Get a Quote
-          </Link>
-        </div>
-      </div>
+    <section className="relative mx-auto w-full max-w-9xl px-4 sm:px-6 lg:px-8">
+      {/* Soft card-like backdrop */}
+      <div className="relative overflow-hidden rounded-[28px] bg-white px-6 pb-14 pt-16 shadow-[0_10px_40px_rgba(0,0,0,0.06)] sm:px-10">
+        {/* Top nav spacer (your real Navbar already exists; this keeps spacing consistent) */}
+        <div className="pointer-events-none absolute inset-0 rounded-[28px] ring-1 ring-black/5" />
 
-      {/* Curved mobile-ratio cards */}
-      <div className="mt-12">
-        {/* Desktop / large: curved layout */}
-        <div
-          className="relative hidden justify-center gap-6 md:flex"
-          style={{ perspective: "1400px" }}
-        >
-          {safeItems.map((item, i) => {
-            const count = safeItems.length;
-            const mid = (count - 1) / 2;
-            const offset = i - mid;
+        {/* Heading */}
+        <div className="mx-auto max-w-7xl text-center">
+          <h1 className="text-4xl font-light leading-tight text-neutral-900 sm:text-5xl">
+            {titleTop}
+            <br />
+            <span className="font-semibold">{titleBold}</span>
+          </h1>
 
-            const rotate = offset * -10;
-            const translateY = Math.abs(offset) * 10;
-            const translateZ = 140 - Math.abs(offset) * 70;
-            const opacity = 1 - Math.abs(offset) * 0.08;
+          <p className="mt-4 text-base text-neutral-600 sm:text-lg">
+            {subtext}
+          </p>
 
-            return (
-              <figure
-                key={i}
-                className="group flex w-[160px] flex-col items-center md:w-[180px] lg:w-[200px]"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                <div
-                  className="relative w-full overflow-hidden rounded-2xl bg-white shadow-[0_18px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/5 transition-transform duration-500"
-                  style={{
-                    transform: `translateY(${translateY}px) translateZ(${translateZ}px) rotateY(${rotate}deg)`,
-                    opacity,
-                    aspectRatio: "9 / 16",
-                  }}
-                >
-                  {item.src ? (
-                    <video
-                      className="absolute inset-0 h-full w-full object-cover"
-                      poster={item.poster}
-                      src={item.src}
-                      muted
-                      playsInline
-                      preload="metadata"
-                      onMouseEnter={(e) =>
-                        (e.currentTarget as HTMLVideoElement).play()
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget as HTMLVideoElement).pause()
-                      }
-                    />
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.poster}
-                      alt={item.alt || "thumbnail"}
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  )}
-
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/10" />
-                </div>
-
-                {item.label ? (
-                  <figcaption className="mt-3 text-center text-sm font-medium text-neutral-700">
-                    {item.label}
-                  </figcaption>
-                ) : null}
-              </figure>
-            );
-          })}
-        </div>
-
-        {/* Mobile: simple horizontal scroller */}
-        <div className="md:hidden">
-          <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2">
-            {safeItems.map((item, i) => (
-              <figure key={i} className="w-[60%] min-w-[220px] snap-center">
-                <div
-                  className="relative w-full overflow-hidden rounded-2xl bg-white shadow-[0_18px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/5"
-                  style={{ aspectRatio: "9 / 16" }}
-                >
-                  {item.src ? (
-                    <video
-                      className="absolute inset-0 h-full w-full object-cover"
-                      poster={item.poster}
-                      src={item.src}
-                      muted
-                      playsInline
-                      preload="metadata"
-                    />
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.poster}
-                      alt={item.alt || "thumbnail"}
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  )}
-                </div>
-                {item.label ? (
-                  <figcaption className="mt-2 text-center text-sm font-medium text-neutral-700">
-                    {item.label}
-                  </figcaption>
-                ) : null}
-              </figure>
-            ))}
+          <div className="mt-6 flex items-center justify-center gap-3">
+            <Link
+              href={cta.href}
+              className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-5 py-3 text-sm font-medium text-white shadow-[0_6px_18px_rgba(0,0,0,0.15)] transition hover:opacity-90"
+            >
+              {cta.label}
+            </Link>
           </div>
+        </div>
+
+        {/* Curved “carousel” of portrait cards */}
+        <div className="relative mx-auto mt-12 flex w-ful max-w-9xl items-end justify-center gap-4 sm:gap-6">
+          {ordered.slice(0, 6).map((src, i) => (
+            <Card
+              key={`${src}-${i}`}
+              src={src}
+              tilt={tilts[i]}
+              offsetY={offsets[i]}
+              opacity={opac[i]}
+            />
+          ))}
+
         </div>
       </div>
     </section>
   );
 }
 
-const demoItems: Item[] = [
-  { poster: "/images/p1.png", src: "/videos/v1.mp4", label: "Reels — UGC Ad" },
-  { poster: "/images/p1.png", src: "/videos/v1.mp4", label: "Shorts — Tutorial" },
-  { poster: "/images/p1.png", src: "/videos/v1.mp4", label: "TikTok — Promo" },
-  { poster: "/images/p1.png", src: "/videos/v1.mp4", label: "Reels — Founder Cut" },
-  { poster: "/images/p1.png", src: "/videos/v1.mp4", label: "Shorts — Product" },
-  { poster: "/images/p1.png", src: "/videos/v1.mp4", label: "TikTok — Story" },
-];
+function Card({
+  src,
+  tilt = 0,
+  offsetY = 0,
+  opacity = 1,
+}: {
+  src: string;
+  tilt?: number;
+  offsetY?: number;
+  opacity?: number;
+}) {
+  return (
+    <div
+      className="relative shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 shadow-[0_12px_30px_rgba(0,0,0,0.12)]"
+      style={{
+        transform: `translateY(${offsetY}px) rotate(${tilt}deg)`,
+        opacity,
+        transition: "transform 600ms ease, opacity 600ms ease",
+      }}
+    >
+      {/* Maintain EXACT mobile aspect ratio */}
+      <div className="relative aspect-[9/16] w-[140px] sm:w-[160px] md:w-[280px]">
+        <Image
+          src={src}
+          alt=""
+          fill
+          sizes="(max-width: 640px) 140px, (max-width: 768px) 160px, 180px"
+          className="object-cover"
+          priority
+        />
+      </div>
+
+      {/* Subtle overlay for depth */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+    </div>
+  );
+}

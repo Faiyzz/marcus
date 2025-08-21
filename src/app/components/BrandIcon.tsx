@@ -8,8 +8,8 @@ type Brand = "instagram" | "youtube" | "tiktok";
 
 const MAP: Record<Brand, { path: string; viewBox: string }> = {
   instagram: { path: siInstagram.path, viewBox: "0 0 24 24" },
-  youtube:   { path: siYoutube.path,   viewBox: "0 0 24 24" },
-  tiktok:    { path: siTiktok.path,    viewBox: "0 0 24 24" },
+  youtube: { path: siYoutube.path, viewBox: "0 0 24 24" },
+  tiktok: { path: siTiktok.path, viewBox: "0 0 24 24" },
 };
 
 /** Minimal, Lucide‑like SVG wrapper so it feels native in your UI */

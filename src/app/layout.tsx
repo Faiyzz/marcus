@@ -10,7 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="no-scrollbar overflow-x-hidden">
       <body>
-        <Navbar transparentUntilScroll />
+        <Navbar  />
         <main className="pt-24">{children}</main>
       </body>
     </html>

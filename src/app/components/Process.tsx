@@ -2,7 +2,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle, Film, Scissors, Rocket } from "lucide-react";
+import { Film, Scissors, Rocket } from "lucide-react";
 
 const steps = [
   {
@@ -52,9 +52,8 @@ export default function Process() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: i * 0.2 }}
                 viewport={{ once: true }}
-                className={`relative flex items-center ${
-                  i % 2 === 0 ? "flex-row" : "flex-row-reverse"
-                }`}
+                className={`relative flex items-center ${i % 2 === 0 ? "flex-row" : "flex-row-reverse"
+                  }`}
               >
                 {/* Step Content */}
                 <div className="w-1/2 px-6">

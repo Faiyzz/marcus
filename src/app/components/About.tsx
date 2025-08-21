@@ -29,16 +29,16 @@ export default function About() {
           </h2>
 
           <p className="mt-6 text-base leading-relaxed text-neutral-600 sm:text-lg">
-            Hey, I’m <span className="font-semibold text-neutral-900">Marcus</span>, 
-            a freelance <span className="text-red-600 font-medium">short-form video editor</span> 
-            helping creators & brands craft scroll-stopping content.  
-            With 3+ years of editing experience, I specialize in TikTok, Instagram Reels, 
-            and YouTube Shorts — delivering edits that hook viewers in seconds and keep them watching.  
+            Hey, I’m <span className="font-semibold text-neutral-900">Marcus</span>,
+            a freelance <span className="text-red-600 font-medium">short-form video editor</span>
+            helping creators & brands craft scroll-stopping content.
+            With 3+ years of editing experience, I specialize in TikTok, Instagram Reels,
+            and YouTube Shorts — delivering edits that hook viewers in seconds and keep them watching.
           </p>
 
           <p className="mt-4 text-base leading-relaxed text-neutral-600 sm:text-lg">
-            My philosophy is simple: <em>fast pacing, sharp cuts, bold captions, 
-            and storytelling that sells</em>. Whether you’re a solo creator or a startup brand, 
+            My philosophy is simple: <em>fast pacing, sharp cuts, bold captions,
+              and storytelling that sells</em>. Whether you’re a solo creator or a startup brand,
             I shape raw footage into videos that perform.
           </p>
 
