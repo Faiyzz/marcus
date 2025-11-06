@@ -1,6 +1,7 @@
 // components/Navbar.tsx
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,13 +12,11 @@ type NavItem = { label: string; href: string };
 export default function Navbar({
   logoText = "Marcus",
   items = [
-    { label: "Work", href: "/#work" },
-    { label: "Services", href: "/#services" },
-    { label: "Pricing", href: "/#pricing" },
-    { label: "About", href: "/#about" },
-    { label: "Contact", href: "/#contact" },
+    { label: "Work", href: "#thumbnailshowcase" },
+    { label: "Services", href: "#process" },
+    { label: "About", href: "#about" },
   ],
-  cta = { label: "Get a 15s Sample Cut", href: "/#book" },
+  cta = { label: "Book a Call", href: "https://calendly.com/marcusedits/meeting" },
 }: {
   logoText?: string;
   items?: NavItem[];
@@ -30,12 +29,13 @@ export default function Navbar({
   useEffect(() => setOpen(false), [pathname]);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b-2 border-red-600">
+    <header className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b-2 border-red-600 shadow-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="font-bold text-xl tracking-tight text-red-600">
-          {logoText}
-        </Link>
+      <Link href="/" className="flex items-center justify-center h-10 px-4 rounded bg-[#d30009]">
+  <span className="text-white font-semibold text-lg">Marcus.</span>
+</Link>
+
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6">

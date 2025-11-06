@@ -1,48 +1,53 @@
 // components/HeroFlow.tsx
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+type MediaItem =
+  | string // backward-compat: plain image path
+  | {
+      poster: string;       // required cover image
+      video?: string;       // optional video src (mp4/webm)
+      type?: string;        // e.g. "video/mp4"
+    };
 
 type HeroFlowProps = {
-  images?: string[]; // 9:16 portraits
+  images?: MediaItem[]; // 9:16 portraits or objects with {poster, video}
   titleTop?: string;
   titleBold?: string;
   subtext?: string;
   cta?: { label: string; href: string };
 };
 
-const DEFAULT_IMAGES = [
-  "/images/p1.png",
-  "/images/p1.png",
-  "/images/p1.png",
-  "/images/p1.png",
-  "/images/p1.png",
-  "/images/p1.png",
+const DEFAULT_MEDIA: MediaItem[] = [
+  { poster: "/images/p1.png", video: "/videos/v1.mp4", type: "video/mp4" },
+  { poster: "/images/p1.png", video: "/videos/v2.mp4", type: "video/mp4" },
+  { poster: "/images/p1.png", video: "/videos/v3.mp4", type: "video/mp4" },
+  { poster: "/images/p1.png", video: "/videos/v4.mp4", type: "video/mp4" },
+  { poster: "/images/p1.png", video: "/videos/v5.mp4", type: "video/mp4" },
+  { poster: "/images/p1.png", video: "/videos/v6.mp4", type: "video/mp4" },
 ];
 
 export default function HeroFlow({
-  images = DEFAULT_IMAGES,
+  images = DEFAULT_MEDIA,
   titleTop = "Bring Stories to Life,",
   titleBold = "One Edit at a Time",
   subtext = "Crafting cinematic, scroll-stopping short-form videos for TikTok, Reels, and YouTube Shorts.",
-  cta = { label: "Let’s Create Together", href: "#" },
+  cta = { label: "Let's Create Together", href: "https://calendly.com/marcusedits/meeting" },
 }: HeroFlowProps) {
-  // keep an internal rotating list so the row feels alive
   const [roll, setRoll] = useState(0);
-  const pics = useMemo(
-    () => images.length ? images : DEFAULT_IMAGES,
+
+  // normalize input: if a string is provided, treat it as an image-only poster
+  const pics = useMemo<Array<{ poster: string; video?: string; type?: string }>>(
+    () =>
+      (images?.length ? images : DEFAULT_MEDIA).map((m) =>
+        typeof m === "string" ? { poster: m } : m
+      ),
     [images]
   );
 
-  useEffect(() => {
-    const id = setInterval(() => setRoll((r) => (r + 1) % pics.length), 2800);
-    return () => clearInterval(id);
-  }, [pics.length]);
-
   const ordered = useMemo(() => {
-    // rotate array by `roll`
     return pics.map((_, i) => pics[(i + roll) % pics.length]);
   }, [pics, roll]);
 
@@ -52,10 +57,8 @@ export default function HeroFlow({
   const opac = [0.9, 0.95, 1, 1, 0.95, 0.9];
 
   return (
-    <section className="relative mx-auto w-full max-w-9xl px-4 sm:px-6 lg:px-8">
-      {/* Soft card-like backdrop */}
+    <section id="heroshowcase" className="relative mx-auto w-full max-w-9xl px-4 sm:px-6 lg:px-8">
       <div className="relative overflow-hidden rounded-[28px] bg-white px-6 pb-14 pt-16 shadow-[0_10px_40px_rgba(0,0,0,0.06)] sm:px-10">
-        {/* Top nav spacer (your real Navbar already exists; this keeps spacing consistent) */}
         <div className="pointer-events-none absolute inset-0 rounded-[28px] ring-1 ring-black/5" />
 
         {/* Heading */}
@@ -66,9 +69,7 @@ export default function HeroFlow({
             <span className="font-semibold">{titleBold}</span>
           </h1>
 
-          <p className="mt-4 text-base text-neutral-600 sm:text-lg">
-            {subtext}
-          </p>
+          <p className="mt-4 text-base text-neutral-600 sm:text-lg">{subtext}</p>
 
           <div className="mt-6 flex items-center justify-center gap-3">
             <Link
@@ -80,18 +81,17 @@ export default function HeroFlow({
           </div>
         </div>
 
-        {/* Curved “carousel” of portrait cards */}
+        {/* Curved "carousel" of portrait cards */}
         <div className="relative mx-auto mt-12 flex w-ful max-w-9xl items-end justify-center gap-4 sm:gap-6">
-          {ordered.slice(0, 6).map((src, i) => (
+          {ordered.slice(0, 6).map((m, i) => (
             <Card
-              key={`${src}-${i}`}
-              src={src}
+              key={`${m.poster}-${i}`}
+              media={m}
               tilt={tilts[i]}
               offsetY={offsets[i]}
               opacity={opac[i]}
             />
           ))}
-
         </div>
       </div>
     </section>
@@ -99,39 +99,107 @@ export default function HeroFlow({
 }
 
 function Card({
-  src,
+  media,
   tilt = 0,
   offsetY = 0,
   opacity = 1,
 }: {
-  src: string;
+  media: { poster: string; video?: string; type?: string };
   tilt?: number;
   offsetY?: number;
   opacity?: number;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [inView, setInView] = useState(false);
+  const [loaded, setLoaded] = useState(false); // when metadata is ready
+
+  // Lazy-init when in viewport
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setInView(true);
+          }
+        });
+      },
+      { rootMargin: "200px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Autoplay when loaded and in view
+  useEffect(() => {
+    if (loaded && inView && videoRef.current) {
+      if (!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
+        videoRef.current.play().catch(() => {});
+      }
+    }
+  }, [loaded, inView]);
+
+  // Hover / tap controls
+  const play = () => {
+    if (!videoRef.current) return;
+    // Respect prefers-reduced-motion
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+    videoRef.current.play().catch(() => {});
+  };
+  const pauseAndReset = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    v.currentTime = 0;
+  };
+
   return (
     <div
+      ref={ref}
       className="relative shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 shadow-[0_12px_30px_rgba(0,0,0,0.12)]"
       style={{
         transform: `translateY(${offsetY}px) rotate(${tilt}deg)`,
         opacity,
         transition: "transform 600ms ease, opacity 600ms ease",
       }}
+      onMouseEnter={play}
+      onMouseLeave={pauseAndReset}
+      onTouchStart={play}
+      onTouchEnd={pauseAndReset}
     >
       {/* Maintain EXACT mobile aspect ratio */}
       <div className="relative aspect-[9/16] w-[140px] sm:w-[160px] md:w-[280px]">
-        <Image
-          src={src}
-          alt=""
-          fill
-          sizes="(max-width: 640px) 140px, (max-width: 768px) 160px, 180px"
-          className="object-cover"
-          priority
-        />
+        {/* If there's a video, render it with poster; else render poster-only fallback */}
+        {media.video ? (
+          <video
+            ref={videoRef}
+            src={media.video}
+            playsInline
+            muted
+            loop
+            preload="auto"
+            onLoadedMetadata={() => setLoaded(true)}
+            className="absolute inset-0 h-full w-full object-cover"
+          ></video>
+        ) : (
+          // Poster-only fallback (no next/image to keep it lean in same component)
+          // Still keeps visuals identical to your original layout
+          <img
+            src={media.poster}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
+        )}
       </div>
 
       {/* Subtle overlay for depth */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+
+      {/* Optional tiny loaded indicator for dev (not visible in UI) */}
+      <span className="sr-only">{loaded ? "Video ready" : "Loading…"}</span>
     </div>
   );
 }

@@ -14,7 +14,7 @@ export default function About() {
         {/* Left: Profile Image */}
         <div className="relative mx-auto h-80 w-80 overflow-hidden rounded-3xl shadow-xl ring-1 ring-black/5 md:h-[420px] md:w-[420px]">
           <Image
-            src="/images/p1.png" // replace with real photo
+            src="/images/marcus.jpg" // replace with real photo
             alt="Marcus — Video Editor"
             fill
             className="object-cover"
@@ -24,13 +24,13 @@ export default function About() {
 
         {/* Right: Text */}
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl">
+          <h2 className="text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl">
             About <span className="text-red-600">Me</span>
           </h2>
 
           <p className="mt-6 text-base leading-relaxed text-neutral-600 sm:text-lg">
             Hey, I’m <span className="font-semibold text-neutral-900">Marcus</span>,
-            a freelance <span className="text-red-600 font-medium">short-form video editor</span>
+            a freelance <span className="text-red-600 font-medium">short-form video editor </span>
             helping creators & brands craft scroll-stopping content.
             With 3+ years of editing experience, I specialize in TikTok, Instagram Reels,
             and YouTube Shorts — delivering edits that hook viewers in seconds and keep them watching.
@@ -57,16 +57,16 @@ export default function About() {
           {/* CTA */}
           <div className="mt-8 flex gap-3">
             <Link
-              href="#work"
+              href="#heroshowcase"
               className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-red-700"
             >
               See My Work
             </Link>
             <Link
-              href="#contact"
+              href="https://calendly.com/marcusedits/meeting"
               className="rounded-full border border-red-600 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50"
             >
-              Let’s Collaborate
+              Let's Collaborate
             </Link>
           </div>
         </div>
