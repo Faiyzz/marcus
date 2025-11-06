@@ -26,7 +26,7 @@ const DEFAULT_MEDIA: MediaItem[] = [
   { poster: "/images/p1.png", video: "/videos/v3.mp4", type: "video/mp4" },
   { poster: "/images/p1.png", video: "/videos/v4.mp4", type: "video/mp4" },
   { poster: "/images/p1.png", video: "/videos/v5.mp4", type: "video/mp4" },
-  { poster: "/images/p1.png", video: "/videos/v6.mp4", type: "video/mp4" },
+  { poster: "/images/p1.png", video: "/videos/v8.mp4", type: "video/mp4" },
 ];
 
 export default function HeroFlow({
