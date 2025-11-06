@@ -1,7 +1,6 @@
 // components/ThumbnailShowcase.tsx
 "use client";
 
-import { useEffect, useState } from "react";
 import Carousel3DImages from "./Carousel3DImages";
 
 const thumbnails = [
@@ -18,13 +17,7 @@ const thumbnails = [
 ];
 
 export default function ThumbnailShowcase() {
-  const [carH, setCarH] = useState<number>(720);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setCarH(window.innerHeight * 0.55);
-    }
-  }, []);
+  const carH = 600;
 
   return (
     <section

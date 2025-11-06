@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 
 type CarouselItem = { id: number; src: string; alt: string };
 
@@ -62,11 +61,10 @@ export default function Carousel3DImages({
               marginRight: `-${overlapPx}px`,
             }}
           >
-            <Image
+            <img
               src={item.src}
               alt={item.alt}
-              fill
-              className="object-cover"
+              className="h-full w-full object-cover"
               loading="lazy"
             />
           </div>
