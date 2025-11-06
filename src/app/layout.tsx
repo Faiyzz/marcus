@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://marcusedits.com"),
   title: "Marcus - Short-Form Video Editor | TikTok, Reels, YouTube Shorts",
   description: "Freelance short-form video editor specializing in TikTok, Instagram Reels, and YouTube Shorts. Clean, fast, platform-native edits that drive engagement.",
   keywords: ["video editor", "TikTok editor", "short-form video", "Reels editor", "YouTube Shorts"],

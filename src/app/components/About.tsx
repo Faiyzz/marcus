@@ -66,7 +66,7 @@ export default function About() {
               href="https://calendly.com/marcusedits/meeting"
               className="rounded-full border border-red-600 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50"
             >
-              Let's Collaborate
+              Let&apos;s Collaborate
             </Link>
           </div>
         </div>

@@ -1,7 +1,6 @@
 // components/Navbar.tsx
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,7 +9,6 @@ import { Menu, X } from "lucide-react";
 type NavItem = { label: string; href: string };
 
 export default function Navbar({
-  logoText = "Marcus",
   items = [
     { label: "Work", href: "#thumbnailshowcase" },
     { label: "Services", href: "#process" },
@@ -18,7 +16,6 @@ export default function Navbar({
   ],
   cta = { label: "Book a Call", href: "https://calendly.com/marcusedits/meeting" },
 }: {
-  logoText?: string;
   items?: NavItem[];
   cta?: { label: string; href: string };
 }) {

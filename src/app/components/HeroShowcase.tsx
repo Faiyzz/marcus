@@ -3,6 +3,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 
 type MediaItem =
   | string // backward-compat: plain image path
@@ -26,7 +28,7 @@ const DEFAULT_MEDIA: MediaItem[] = [
   { poster: "/images/p1.png", video: "/videos/v3.mp4", type: "video/mp4" },
   { poster: "/images/p1.png", video: "/videos/v4.mp4", type: "video/mp4" },
   { poster: "/images/p1.png", video: "/videos/v5.mp4", type: "video/mp4" },
-  { poster: "/images/p1.png", video: "/videos/v8.mp4", type: "video/mp4" },
+  { poster: "/images/p1.png", video: "/videos/v6.mp4", type: "video/mp4" },
 ];
 
 export default function HeroFlow({
@@ -36,7 +38,7 @@ export default function HeroFlow({
   subtext = "Crafting cinematic, scroll-stopping short-form videos for TikTok, Reels, and YouTube Shorts.",
   cta = { label: "Let's Create Together", href: "https://calendly.com/marcusedits/meeting" },
 }: HeroFlowProps) {
-  const [roll, setRoll] = useState(0);
+  const roll = 0;
 
   // normalize input: if a string is provided, treat it as an image-only poster
   const pics = useMemo<Array<{ poster: string; video?: string; type?: string }>>(
@@ -186,10 +188,11 @@ function Card({
         ) : (
           // Poster-only fallback (no next/image to keep it lean in same component)
           // Still keeps visuals identical to your original layout
-          <img
+          <Image
             src={media.poster}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover"
+            fill
+            className="object-cover"
             loading="lazy"
           />
         )}
